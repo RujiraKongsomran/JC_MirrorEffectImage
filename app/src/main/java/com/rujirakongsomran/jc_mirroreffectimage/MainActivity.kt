@@ -8,13 +8,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,7 +57,7 @@ object HalfSizeShape : Shape {
 
 @Composable
 fun Mirror(content: @Composable () -> Unit) {
-    Column {
+    Column(modifier = Modifier.padding(24.dp)) {
         content()
         Box(
             modifier = Modifier
@@ -67,6 +68,15 @@ fun Mirror(content: @Composable () -> Unit) {
                 .clip(
                     HalfSizeShape
                 )
+                .drawWithContent {
+                    val colors = listOf(Color.Transparent, Color.White)
+                    drawContent()
+                    drawRect(
+                        brush = Brush.verticalGradient(colors),
+                        blendMode = BlendMode.DstIn
+                    )
+                }
+                .blur(radiusX = 1.dp, radiusY = 3.dp, BlurredEdgeTreatment.Unbounded)
         ) {
             content()
         }
